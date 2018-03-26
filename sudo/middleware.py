@@ -5,6 +5,7 @@ sudo.middleware
 :copyright: (c) 2014 by Matt Robenolt.
 :license: BSD, see LICENSE for more details.
 """
+from django.utils.deprecation import MiddlewareMixin
 from sudo.settings import (
     COOKIE_DOMAIN, COOKIE_HTTPONLY, COOKIE_NAME,
     COOKIE_PATH, COOKIE_SECURE, COOKIE_SALT,
@@ -12,7 +13,7 @@ from sudo.settings import (
 from sudo.utils import has_sudo_privileges
 
 
-class SudoMiddleware(object):
+class SudoMiddleware(MiddlewareMixin):
     """
     Middleware that contributes ``request.is_sudo()`` and sets the required
     cookie for sudo mode to work correctly.
