@@ -5,11 +5,7 @@ sudo.views
 :copyright: (c) 2014 by Matt Robenolt.
 :license: BSD, see LICENSE for more details.
 """
-try:
-    from urllib.parse import urlparse, urlunparse
-except ImportError:  # pragma: no cover
-    # Python 2 fallback
-    from urlparse import urlparse, urlunparse  # noqa
+from urllib.parse import urlparse, urlunparse
 
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect, QueryDict
@@ -19,10 +15,11 @@ from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_protect
 from django.views.generic import View
 from django.utils.decorators import method_decorator
+from django.utils.http import url_has_allowed_host_and_scheme
 
 from sudo.settings import (REDIRECT_FIELD_NAME, REDIRECT_URL,
                            REDIRECT_TO_FIELD_NAME, URL)
-from sudo.utils import grant_sudo_privileges, is_safe_url
+from sudo.utils import grant_sudo_privileges
 from sudo.forms import SudoForm
 
 try:
@@ -84,7 +81,7 @@ class SudoView(View):
         redirect_to = request.session.pop(REDIRECT_TO_FIELD_NAME,
                                           redirect_to)
         # Double check we're not redirecting to other sites
-        if not is_safe_url(url=redirect_to, host=request.get_host()):
+        if not url_has_allowed_host_and_scheme(redirect_to, request.get_host()):
             redirect_to = resolve_url(REDIRECT_URL)
         return HttpResponseRedirect(redirect_to)
 
@@ -96,7 +93,7 @@ class SudoView(View):
         redirect_to = request.GET.get(REDIRECT_FIELD_NAME, REDIRECT_URL)
 
         # Make sure we're not redirecting to other sites
-        if not is_safe_url(url=redirect_to, host=request.get_host()):
+        if not url_has_allowed_host_and_scheme(redirect_to, request.get_host()):
             redirect_to = resolve_url(REDIRECT_URL)
 
         if request.is_sudo():
