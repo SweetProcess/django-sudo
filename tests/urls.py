@@ -1,10 +1,5 @@
-try:
-    from django.conf.urls import url, patterns
-except ImportError:
-    from django.conf.urls.defaults import url, patterns  # noqa
+from django.urls import path
 
-
-urlpatterns = patterns(
-    '',
-    url(r'^sudo/', 'sudo.views.sudo', name='sudo'),
-)
+urlpatterns = [
+    path(r'sudo/', 'sudo.views.sudo', name='sudo'),
+]

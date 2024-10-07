@@ -10,7 +10,7 @@ import unicodedata
 from django.core.signing import BadSignature
 from django.utils import six
 from django.utils.crypto import get_random_string, constant_time_compare
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 from django.utils.six.moves.urllib.parse import urlparse
 
 from sudo.settings import COOKIE_NAME, COOKIE_AGE, COOKIE_SALT
@@ -32,7 +32,7 @@ def grant_sudo_privileges(request, max_age=COOKIE_AGE):
 
     # Token doesn't need to be unique,
     # just needs to be unpredictable and match the cookie and the session
-    token = get_random_string()
+    token = get_random_string(length=12)
     request.session[COOKIE_NAME] = token
     request._sudo = True
     request._sudo_token = token
@@ -79,7 +79,7 @@ def is_safe_url(url, host=None):
         return False
     if six.PY2:  # pragma: nocover
         try:
-            url = force_text(url)
+            url = force_str(url)
         except UnicodeDecodeError:
             return False
     # Chrome treats \ completely as / in paths but it could be part of some
