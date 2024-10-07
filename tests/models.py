@@ -1,4 +1,3 @@
-import django
 from django.db import models
 try:
     from django.contrib.auth.models import AbstractBaseUser
@@ -9,10 +8,9 @@ except ImportError:
 
 
 class EmailUser(AbstractBaseUser):
-    if django.VERSION >= (1, 5):
-        # Skip on Django 1.4, since we're inheriting from User, which already
-        # has an email address.
-        email = models.CharField(max_length=254, unique=True)
+    # Skip on Django 1.4, since we're inheriting from User, which already
+    # has an email address.
+    email = models.CharField(max_length=254, unique=True)
 
     USERNAME_FIELD = 'email'
 
